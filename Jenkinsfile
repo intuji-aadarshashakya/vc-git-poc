@@ -26,21 +26,27 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building project...'
-                // Add build steps (npm build, maven, etc.)
-            }
-        }
-
-        stage('Test') {
-            steps {
-                echo 'Running Tests...'
-                // Add test commands
+                script {
+                    withCredentials([string(credentialsId: 'CONTAINER-REGESTRY-TOKEN', variable: 'DO_TOKEN')]) {
+                        sh '''
+                        doctl auth init --access-token $DO_TOKEN
+                        doctl registry login
+                        docker build --rm --squash --no-cache -t registry.digitalocean.com/intuji/vc-git-poc:${VERSION_TAG} -f Dockerfile .
+                        docker push registry.digitalocean.com/intuji/vc-git-poc:${VERSION_TAG}
+                        '''
+                    }
+                }
             }
         }
 
         stage('Deploy') {
             steps {
-                echo "Deploying version ${VERSION_TAG}..."
-                // Add deployment commands (ssh deploy, docker push, etc.)
+                script {
+                    sh '''
+                    kubectl config use-context do-syd1-intuji
+                    envsubst < $WORKSPACE/k8s/deploy.yaml | kubectl apply -f - --namespace=default
+                    '''
+                }
             }
         }
 
