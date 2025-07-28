@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vc-git-poc
+  labels:
+    app: vc-git-poc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vc-git-poc
+  template:
+    metadata:
+      labels:
+        app: vc-git-poc
+    spec:
+      containers:
+      - name: vc-git-poc
+        image: registry.digitalocean.com/intuji/vc-git-poc:${VERSION_TAG}
+        ports:
+        - containerPort: 8080
