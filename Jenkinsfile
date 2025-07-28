@@ -1,13 +1,9 @@
 pipeline {
     agent any
 
-    triggers {
-        pollSCM('* * * * *')  // Poll every minute (or use webhook)
-    }
-
     environment {
         DOCKER_REGISTRY = 'registry.digitalocean.com/intuji'
-        IMAGE_NAME = 'vc-git-poc'
+        IMAGE_NAME = 'mkdocs'
     }
 
     stages {
@@ -39,8 +35,8 @@ pipeline {
                         VERSION_TAG=$(git describe --tags --exact-match 2>/dev/null)
                         echo "VERSION_TAG = ${VERSION_TAG}"
                         
-                        docker build --rm --squash --no-cache -t registry.digitalocean.com/intuji/vc-git-poc:${VERSION_TAG} -f Dockerfile .
-                        docker push registry.digitalocean.com/intuji/vc-git-poc:${VERSION_TAG}
+                        docker build --rm --squash --no-cache -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:${VERSION_TAG} -f Dockerfile .
+                        docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:${VERSION_TAG}
                         '''
                     }
                 }
