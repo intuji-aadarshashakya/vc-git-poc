@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     // Get the Git Tag that triggered this build
-                    VERSION_TAG = sh(script: "git describe --tags --exact-match || echo 'latest'", returnStdout: true).trim()
+                    VERSION_TAG = sh(script: "git describe --tags --exact-match", returnStdout: true).trim()
                     echo "VERSION_TAG = ${VERSION_TAG}"
                 }
             }
@@ -36,7 +36,7 @@ pipeline {
                         doctl auth init --access-token $DO_TOKEN
                         doctl registry login
 
-                        VERSION_TAG=$(git describe --tags --exact-match 2>/dev/null || echo "latest")
+                        VERSION_TAG=$(git describe --tags --exact-match 2>/dev/null)
                         echo "VERSION_TAG = ${VERSION_TAG}"
                         
                         docker build --rm --squash --no-cache -t registry.digitalocean.com/intuji/vc-git-poc:${VERSION_TAG} -f Dockerfile .
