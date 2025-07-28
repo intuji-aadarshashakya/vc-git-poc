@@ -6,7 +6,8 @@ pipeline {
     }
 
     environment {
-
+        DOCKER_REGISTRY = 'registry.digitalocean.com/intuji'
+        IMAGE_NAME = 'vc-git-poc'
     }
 
     stages {
