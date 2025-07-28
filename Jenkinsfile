@@ -6,19 +6,22 @@ pipeline {
     }
 
     environment {
-        VERSION_TAG = ''
+
     }
 
     stages {
         stage('Checkout') {
             steps {
+                checkout scm
+            }
+        }
+
+    stage('Get Version Tag') {
+            steps {
                 script {
-                    checkout scm
-                    VERSION_TAG = sh(script: "git describe --tags --exact-match || true", returnStdout: true).trim()
-                    if (VERSION_TAG == '') {
-                        error "No Tag found on this commit. Skipping pipeline."
-                    }
-                    echo "Building Version: ${VERSION_TAG}"
+                    // Get the Git Tag that triggered this build
+                    VERSION_TAG = sh(script: "git describe --tags --exact-match || echo 'latest'", returnStdout: true).trim()
+                    echo "VERSION_TAG = ${VERSION_TAG}"
                 }
             }
         }
