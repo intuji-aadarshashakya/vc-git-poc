@@ -35,6 +35,10 @@ pipeline {
                         sh '''
                         doctl auth init --access-token $DO_TOKEN
                         doctl registry login
+
+                        VERSION_TAG=$(git describe --tags --exact-match 2>/dev/null || echo "latest")
+                        echo "VERSION_TAG = ${VERSION_TAG}"
+                        
                         docker build --rm --squash --no-cache -t registry.digitalocean.com/intuji/vc-git-poc:${VERSION_TAG} -f Dockerfile .
                         docker push registry.digitalocean.com/intuji/vc-git-poc:${VERSION_TAG}
                         '''
@@ -47,6 +51,7 @@ pipeline {
             steps {
                 script {
                     sh '''
+                    export VERSION_TAG=$(git describe --tags --exact-match)
                     kubectl config use-context do-syd1-intuji
                     envsubst < $WORKSPACE/k8s/deploy.yaml | kubectl apply -f - --namespace=default
                     '''
