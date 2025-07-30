@@ -17,7 +17,10 @@ pipeline {
             steps {
                 script {
                     // Get the Git Tag that triggered this build
-                    VERSION_TAG = sh(script: "git describe --tags --exact-match", returnStdout: true).trim()
+                    VERSION_TAG = sh(script: "git describe --tags --exact-match 2>/dev/null || echo ''", returnStdout: true).trim()
+                    if (!VERSION_TAG) {
+                        error "No Git tag found on this commit. Skipping pipeline."
+                    }
                     echo "VERSION_TAG = ${VERSION_TAG}"
                 }
             }
