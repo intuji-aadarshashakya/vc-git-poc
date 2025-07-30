@@ -1,6 +1,10 @@
 pipeline {
     agent any
-
+    
+    triggers {
+        githubPush()
+    }
+    
     environment {
         DOCKER_REGISTRY = 'registry.digitalocean.com/intuji'
         IMAGE_NAME = 'mkdocs'
