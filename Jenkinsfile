@@ -6,7 +6,7 @@ pipeline {
     }
     
     environment {
-        DOCKER_REGISTRY = 'registry.digitalocean.com/intuji'
+        DOCKER_REGISTRY = 'registry.digitalocean.com/intujii'
         IMAGE_NAME = 'mkdocs'
     }
 
