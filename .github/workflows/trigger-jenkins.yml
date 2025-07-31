@@ -1,0 +1,15 @@
+name: Trigger Jenkins on New Tag
+on:
+  push:
+    tags:
+      - 'v*'  # Trigger only for tags starting with 'v' (e.g., v1.0.0)
+
+jobs:
+  trigger_jenkins:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Jenkins Build
+        run: |
+          curl -sS -X POST \
+            -u "${{ secrets.JENKINS_USER }}:${{ secrets.JENKINS_TOKEN }}" \
+            "${{ secrets.JENKINS_URL }}/job/your-job-name/build?token=${{ secrets.JENKINS_JOB_TOKEN }}"
