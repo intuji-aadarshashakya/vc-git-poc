@@ -10,6 +10,9 @@ jobs:
     steps:
       - name: Trigger Jenkins Build
         run: |
-          curl -sS -X POST \
+          CRUMB=$(curl -s -u "${{ secrets.JENKINS_USER }}:${{ secrets.JENKINS_TOKEN }}" \
+          "${{ secrets.JENKINS_URL }}/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,\":\",//crumb)")
+          curl -X POST \
             -u "${{ secrets.JENKINS_USER }}:${{ secrets.JENKINS_TOKEN }}" \
-            "${{ secrets.JENKINS_URL }}/job/vc-git-poc/build?token=${{ secrets.JENKINS_JOB_TOKEN }}"
+            -H "$CRUMB" \
+            "${{ secrets.JENKINS_URL }}/job/vc-git-poc/build"
